@@ -65,25 +65,50 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     
-    
+    // Add map annotation on long press
     
     func addAnnotation(gestureRecognizer:UIGestureRecognizer){
-        let touchPoint = gestureRecognizer.location(in: mapView)
-        let newCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = newCoordinates
-        mapView.addAnnotation(annotation)
+        
+        if gestureRecognizer.state == UIGestureRecognizerState.began {
+        
+            let touchPoint = gestureRecognizer.location(in: mapView)
+            let newCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = newCoordinates
+            mapView.addAnnotation(annotation)
+            
+            print(self.mapView.annotations.count)
+            
+        }
+
     }
     
 
     // Pin tapped
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        print("Pin Tapped")
-        let selectedLoc = view.annotation
-        print(selectedLoc?.coordinate as Any)
         
-        performSegue(withIdentifier: "ShowCollectionView", sender: self)
+        if deleteBarVisible == true {
+            
+            // Remove annotation
+            
+            print("Pin Tapped")
+            performUIUpdatesOnMain {
+                self.mapView.removeAnnotation(view.annotation!)
+            }
+            
+        } else {
+            
+            // Take user to photo album
+            
+            print("Pin Tapped")
+            let selectedLoc = view.annotation
+            print(selectedLoc?.coordinate as Any)
+            
+            performSegue(withIdentifier: "ShowCollectionView", sender: self)
+            
+        }
+        
     }
 
 

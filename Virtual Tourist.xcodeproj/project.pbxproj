@@ -14,6 +14,7 @@
 		E11B5E081DCA248300BDDFE0 /* Virtual_TouristTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B5E071DCA248300BDDFE0 /* Virtual_TouristTests.swift */; };
 		E11B5E131DCA248300BDDFE0 /* Virtual_TouristUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B5E121DCA248300BDDFE0 /* Virtual_TouristUITests.swift */; };
 		E11B5E211DCA29CB00BDDFE0 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B5E201DCA29CB00BDDFE0 /* MapViewController.swift */; };
+		E18306A11DD4E5DB00EDD6CB /* GCDBlackBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18306A01DD4E5DA00EDD6CB /* GCDBlackBox.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		E11B5E121DCA248300BDDFE0 /* Virtual_TouristUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Virtual_TouristUITests.swift; sourceTree = "<group>"; };
 		E11B5E141DCA248300BDDFE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E11B5E201DCA29CB00BDDFE0 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		E18306A01DD4E5DA00EDD6CB /* GCDBlackBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GCDBlackBox.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				E11B5DF21DCA248300BDDFE0 /* AppDelegate.swift */,
+				E18306A01DD4E5DA00EDD6CB /* GCDBlackBox.swift */,
 				E11B5E201DCA29CB00BDDFE0 /* MapViewController.swift */,
 				E11B5DF61DCA248300BDDFE0 /* Main.storyboard */,
 				E11B5DF91DCA248300BDDFE0 /* Assets.xcassets */,
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E11B5DF31DCA248300BDDFE0 /* AppDelegate.swift in Sources */,
+				E18306A11DD4E5DB00EDD6CB /* GCDBlackBox.swift in Sources */,
 				E11B5E211DCA29CB00BDDFE0 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,6 +518,7 @@
 				E11B5E191DCA248300BDDFE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E11B5E1A1DCA248300BDDFE0 /* Build configuration list for PBXNativeTarget "Virtual TouristTests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +527,7 @@
 				E11B5E1C1DCA248300BDDFE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E11B5E1D1DCA248300BDDFE0 /* Build configuration list for PBXNativeTarget "Virtual TouristUITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +536,7 @@
 				E11B5E1F1DCA248300BDDFE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
