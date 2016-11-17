@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController, MKMapViewDelegate {
 
@@ -19,17 +20,40 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // MARK: Properties
     
+    var pin: Pin!
+    
+    var stack: CoreDataStack!
+    
     var deleteBarVisible = false
     
+    
+    
+
+    
+    
+    
+    
     // MARK: Lifecycle
+    
+    override func viewDidLoad() {
+        
+        // Get core data stack
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        stack = delegate.stack
+        
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Set gesture recognizer
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MapViewController.addAnnotation))
         longPressGestureRecognizer.minimumPressDuration = 0.5
-        
         view.addGestureRecognizer(longPressGestureRecognizer)
+        
+        
+        
+        loadPins()
         
 
         
@@ -72,16 +96,55 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         if gestureRecognizer.state == UIGestureRecognizerState.began {
         
             let touchPoint = gestureRecognizer.location(in: mapView)
-            let newCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
+            let touchMapCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
             let annotation = MKPointAnnotation()
-            annotation.coordinate = newCoordinates
+            annotation.coordinate = touchMapCoordinates
             mapView.addAnnotation(annotation)
             
             print(self.mapView.annotations.count)
             
+            pin = Pin(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude, context: stack.context)
+            
         }
+        
+        stack.save()
 
     }
+    
+    
+    
+    
+    
+    
+    
+    func loadPins() {
+        
+        // create fetch request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+        do {
+            if let pins = try? stack.context.fetch(fetchRequest) as! [Pin] {
+                
+                // create annotations for pins
+                for pin in pins {
+                    let latitude = CLLocationDegrees(pin.latitude)
+                    let longitude = CLLocationDegrees(pin.longitude)
+                    let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                    let newAnotation = MKPointAnnotation()
+                    newAnotation.coordinate = coordinate
+                    mapView.addAnnotation(newAnotation)
+                }
+
+            }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    // NOTE: WHEN YOU TAP THE PIN TO GO TO THE PHOTO ALBUM VIEW AND THEN RETURN TO MAP VIEW, NOTHING HAPPENS WHEN YOU TAP A PIN
     
 
     // Pin tapped
@@ -90,25 +153,56 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         if deleteBarVisible == true {
             
-            // Remove annotation
             
-            print("Pin Tapped")
+
+            
+            // Find this pin
+            var pin: Pin!
+            do {
+                let thisPin = view.annotation as AnyObject
+                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+                let predicate = NSPredicate(format: "latitude == %@ AND longitude == %@", argumentArray: [thisPin.coordinate.latitude, thisPin.coordinate.longitude])
+                fetchRequest.predicate = predicate
+                let pins = try stack.context.fetch(fetchRequest) as? [Pin]
+                pin = pins![0]
+            } catch let error as NSError {
+                print("failed to get pin by object id")
+                print(error.localizedDescription)
+                return
+            }
+            
+            
+            
+            
+            // Remove annotation from mapView
+            
             performUIUpdatesOnMain {
                 self.mapView.removeAnnotation(view.annotation!)
             }
+            
+            
+            
+            
+            stack.context.delete(pin)
+            stack.save()
             
         } else {
             
             // Take user to photo album
             
-            print("Pin Tapped")
-            let selectedLoc = view.annotation
-            print(selectedLoc?.coordinate as Any)
-            
             performSegue(withIdentifier: "ShowCollectionView", sender: self)
             
         }
         
+    }
+    
+    
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "ShowCollectionView") {
+            let viewController = segue.destination as! PhotoAlbumViewController
+            viewController.pin = pin
+        }
     }
 
 

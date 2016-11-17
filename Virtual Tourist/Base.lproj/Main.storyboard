@@ -67,10 +67,10 @@
             </objects>
             <point key="canvasLocation" x="1056.8" y="122.78860569715144"/>
         </scene>
-        <!--View Controller-->
+        <!--Photo Album View Controller-->
         <scene sceneID="cgm-Vl-Owl">
             <objects>
-                <viewController id="kF0-Fc-SGw" sceneMemberID="viewController">
+                <viewController id="kF0-Fc-SGw" customClass="PhotoAlbumViewController" customModule="Virtual_Tourist" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="p2k-qH-VhY"/>
                         <viewControllerLayoutGuide type="bottom" id="sV4-Cf-nRM"/>
@@ -91,6 +91,9 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hdy-UN-Ts8">
                                 <rect key="frame" x="0.0" y="64" width="375" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <outlet property="delegate" destination="kF0-Fc-SGw" id="MNV-Hs-1qh"/>
+                                </connections>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="PBi-fd-FCQ">
                                 <rect key="frame" x="16" y="200" width="343" height="423"/>
@@ -112,6 +115,10 @@
                                         </view>
                                     </collectionViewCell>
                                 </cells>
+                                <connections>
+                                    <outlet property="dataSource" destination="kF0-Fc-SGw" id="g6n-8T-Df0"/>
+                                    <outlet property="delegate" destination="kF0-Fc-SGw" id="WUk-PJ-FdT"/>
+                                </connections>
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
