@@ -91,7 +91,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     // Add map annotation on long press
     
-    func addAnnotation(gestureRecognizer:UIGestureRecognizer){
+    func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         
         if gestureRecognizer.state == UIGestureRecognizerState.began {
         
@@ -145,6 +145,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     
     // NOTE: WHEN YOU TAP THE PIN TO GO TO THE PHOTO ALBUM VIEW AND THEN RETURN TO MAP VIEW, NOTHING HAPPENS WHEN YOU TAP A PIN
+    // NOTE: WHEN YOU START THE APP AND CLICK ON AN EXISTING PIN, THE APP CRASHES
     
 
     // Pin tapped

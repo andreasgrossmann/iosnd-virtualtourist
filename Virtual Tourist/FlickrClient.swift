@@ -20,7 +20,7 @@ class FlickrClient {
     
     // MARK: Get photos from Flickr
     
-    func getFlickrPhotos(pin: Pin, completionHandler: @escaping (_ success: Bool?, _ error: String?) -> Void) {
+    func getFlickrPhotos(pin: Pin, completionHandler: @escaping (_ photos: [Photo]?, _ error: String?) -> Void) {
         
         /* Configure the request */
         let request = NSMutableURLRequest(url: URL(string: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=6d7824a3602f71e90ef6a4050ef2b3b7&lat=\(pin.latitude)&lon=\(pin.longitude)&format=json&nojsoncallback=1")!)
@@ -63,6 +63,13 @@ class FlickrClient {
                 
                 let photo = photos["photo"] as! [[String: AnyObject]]
                 
+                
+                
+                
+                
+                
+                var finalPhotos: [Photo] = []
+                
                 for x in photo {
                     
                     // WORK WITH IF LET HERE...?
@@ -74,32 +81,27 @@ class FlickrClient {
                     let id = x["id"]
                     let secret = x["secret"]
                     
-                    let url = "http://farm\(farm!).staticflickr.com/\(server!)/\(id!)_\(secret!)_m.jpg"
+                    let urlString = "https://farm\(farm!).staticflickr.com/\(server!)/\(id!)_\(secret!)_m.jpg"
                     
-                    print(url)
-                    
-                    
-                    
-                    
-                    _ = Photo(url: url, data: nil, context: self.stack.context)
+//                    print(urlString)
+
                     
                     
+
+                        
+                    let photo = Photo(url: urlString, data: nil, context: self.stack.context)
+                    photo.pin = pin
+                
+                    finalPhotos.append(photo)
                     
                     
-//                    do {
-//                        try self.stack.context.save()
-//                    } catch {
-//                        fatalError("Error while saving main context: \(error)")
-//                    }
-                    
-                    
-                    
+
                     
                 }
                 
+                completionHandler(finalPhotos, nil)
                 
-                // WE HAVE THE COORDINATES HERE, SO WE MIGHT AS WELL SAVE THEM RIGHT AWARY RATHER THEN SENDING THE RESULTS BACK
-                // SAVE PHOTO URLs WITH RELEVANT PIN (COORDINATES)
+                
                 
                 
                 
@@ -107,13 +109,55 @@ class FlickrClient {
             
             
             
-            completionHandler(true, nil)
+//            completionHandler(true, nil)
             
         }
         
         task.resume()
         
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func getDataFromUrl(url: URL, completion: @escaping (_ data: Data?, _  response: URLResponse?, _ error: Error?) -> Void) {
+        URLSession.shared.dataTask(with: url) {
+            (data, response, error) in
+            completion(data, response, error)
+            }.resume()
+    }
+    
+    func downloadImage(photos: Photo, completion: @escaping (_ data: Data?, _ error: Error?) -> Void) {
+//        print("Download Started")
+        
+        let url = URL(string: photos.url!)
+        
+        getDataFromUrl(url: url!) { (data, response, error)  in
+            guard let data = data, error == nil else { return }
+//            print(response?.suggestedFilename ?? url.lastPathComponent)
+//            print("Download Finished")
+            completion(data, nil)
+
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     // MARK: Shared Instance
     

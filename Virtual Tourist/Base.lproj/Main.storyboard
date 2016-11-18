@@ -99,20 +99,35 @@
                                 <rect key="frame" x="16" y="200" width="343" height="423"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="4yl-kK-7G1">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AC7-jl-pJV">
                                     <size key="itemSize" width="50" height="50"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CollectionViewCell" id="32d-v5-ElI">
-                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VirtualTouristCollectionViewCell" id="32d-v5-ElI" customClass="VirtualTouristCollectionViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
+                                        <rect key="frame" x="71.5" y="0.0" width="200" height="200"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uSe-hN-WPN">
+                                                    <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
+                                                </imageView>
+                                            </subviews>
                                         </view>
+                                        <constraints>
+                                            <constraint firstItem="uSe-hN-WPN" firstAttribute="top" secondItem="32d-v5-ElI" secondAttribute="top" id="Nf9-Nh-BM8"/>
+                                            <constraint firstAttribute="bottom" secondItem="uSe-hN-WPN" secondAttribute="bottom" id="aih-YU-DgA"/>
+                                            <constraint firstAttribute="trailing" secondItem="uSe-hN-WPN" secondAttribute="trailing" id="b4k-lG-TOq"/>
+                                            <constraint firstItem="uSe-hN-WPN" firstAttribute="leading" secondItem="32d-v5-ElI" secondAttribute="leading" id="vCm-I7-isI"/>
+                                        </constraints>
+                                        <size key="customSize" width="200" height="200"/>
+                                        <connections>
+                                            <outlet property="virtualTouristCollectionImage" destination="uSe-hN-WPN" id="VJy-zG-IJv"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                                 <connections>
@@ -124,6 +139,10 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="BES-y1-ueP"/>
+                    <connections>
+                        <outlet property="photoAlbumCollectionView" destination="PBi-fd-FCQ" id="hZm-ot-eY1"/>
+                        <outlet property="photoAlbumMapView" destination="hdy-UN-Ts8" id="Z91-al-LgU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqW-fA-rmz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

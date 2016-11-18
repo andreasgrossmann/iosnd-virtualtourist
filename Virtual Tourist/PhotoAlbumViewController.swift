@@ -28,6 +28,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     
     // MARK: Outlets
     
+    @IBOutlet weak var photoAlbumMapView: MKMapView!
+    @IBOutlet weak var photoAlbumCollectionView: UICollectionView!
     
     
     
@@ -40,44 +42,82 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         // Get core data stack
         let delegate = UIApplication.shared.delegate as! AppDelegate
         stack = delegate.stack
+
+
         
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
         
+        // calculate layout for collection view
+        let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 0
+        
+        // update collection view layout
+        let size = floor(photoAlbumCollectionView.frame.size.width/3)
+        layout.itemSize = CGSize(width: size, height: size)
+        photoAlbumCollectionView.collectionViewLayout = layout
         
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+
+        // Check if we already have photos for this location
         
-        
-        // HERE WE SHOULD CHECK IF THERE ARE ALREADY PHOTOS SAVED FOR THIS LOCATION
-        // IF YES, POPULATE THE COLLECTION VIEW WITH THEM
-        // IF NOT, DOWNLOAD PHOTOS FROM FLICKR
-        
-        
-        
-        FlickrClient.sharedInstance().getFlickrPhotos(pin: pin) { (success, error) in
+        if photos.count == 0 {
             
-            if success! {
-                
-                print("success")
-                
-                
-                // POPULATE COLLECTION VIEW WITH SAVED PHOTOS
+
+            FlickrClient.sharedInstance().getFlickrPhotos(pin: pin) { (photos, error) in
                 
                 
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
                 
                 
-            } else {
                 
-                print("error")
+                if let photos = photos {
+                    
+                    for photo in photos {
+                        photo.pin = self.pin
+                    }
+                    
+                    performUIUpdatesOnMain {
+                        self.photos = photos
+                    }
+                    performUIUpdatesOnMain {
+                        if self.photos.count == 0 {
+                            print("no photos found")
+                        }
+                    }
+                    
+                    
+                    self.photoAlbumCollectionView.reloadData()
+                    
+                    print("something strange")
+                    print(self.photos)
+                    
+            
+                    
+                } else {
+                    
+                    print("error")
+                    
+                }
                 
             }
+
             
         }
         
         
-        
+
     }
     
     
@@ -91,11 +131,54 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         return photos.count
     }
     
+
+    
     
     // Prepare cells with meme images and text
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCell", for: indexPath) //as! SentMemeCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VirtualTouristCollectionViewCell", for: indexPath) as! VirtualTouristCollectionViewCell
+        
+        let photoObject = photos[indexPath.row]
+        
+        
+        performUIUpdatesOnMain {
+            cell.virtualTouristCollectionImage.image = UIImage(named: "placeholder")
+        }
+        
+        
+        
+        if photos[indexPath.item].data == nil {
+
+        
+        
+
+                
+            FlickrClient.sharedInstance().downloadImage(photos: photoObject) { (data, error) in
+                
+                
+                if (data != nil) {
+                    
+                    print(data!)
+                    
+                    performUIUpdatesOnMain {
+                        cell.virtualTouristCollectionImage.image = UIImage(data: data!)
+                    }
+                        
+                }
+                
+                
+            }
+                
+            
+            
+        } else {
+            
+            performUIUpdatesOnMain {
+                cell.virtualTouristCollectionImage.image = UIImage(data: self.photos[indexPath.item].data! as Data)
+            }
+            
+        }
 
         
         
