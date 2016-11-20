@@ -90,7 +90,7 @@ class FlickrClient {
 
                         
                     let photo = Photo(url: urlString, data: nil, context: self.stack.context)
-                    photo.pin = pin
+//                    photo.pin = pin
                 
                     finalPhotos.append(photo)
                     

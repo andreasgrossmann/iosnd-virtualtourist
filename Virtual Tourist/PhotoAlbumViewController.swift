@@ -71,6 +71,8 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         if photos.count == 0 {
             
+            print(pin)
+            
 
             FlickrClient.sharedInstance().getFlickrPhotos(pin: pin) { (photos, error) in
                 
@@ -90,6 +92,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                     
                     performUIUpdatesOnMain {
                         self.photos = photos
+                        self.stack.save()
                     }
                     performUIUpdatesOnMain {
                         if self.photos.count == 0 {
@@ -97,11 +100,12 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                         }
                     }
                     
+                    performUIUpdatesOnMain {
+                        self.photoAlbumCollectionView.reloadData()
+                    }
                     
-                    self.photoAlbumCollectionView.reloadData()
-                    
-                    print("something strange")
-                    print(self.photos)
+
+//                    print(photos)
                     
             
                     
@@ -152,7 +156,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
 
         
         
-
+            // Get image data from Flickr
                 
             FlickrClient.sharedInstance().downloadImage(photos: photoObject) { (data, error) in
                 

@@ -37,26 +37,23 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     
     override func viewDidLoad() {
         
-        // Get core data stack
-        let delegate = UIApplication.shared.delegate as! AppDelegate
-        stack = delegate.stack
-        
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
         // Set gesture recognizer
         let longPressGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MapViewController.addAnnotation))
         longPressGestureRecognizer.minimumPressDuration = 0.5
         view.addGestureRecognizer(longPressGestureRecognizer)
         
+        // Get core data stack
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        stack = delegate.stack
         
         
         loadPins()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
-        
     }
     
     // MARK: Actions
@@ -137,24 +134,19 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    // NOTE: WHEN YOU TAP THE PIN TO GO TO THE PHOTO ALBUM VIEW AND THEN RETURN TO MAP VIEW, NOTHING HAPPENS WHEN YOU TAP A PIN
-    // NOTE: WHEN YOU START THE APP AND CLICK ON AN EXISTING PIN, THE APP CRASHES
+
     
 
     // Pin tapped
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
-        if deleteBarVisible == true {
+        // deselect the pin annotation
+        mapView.deselectAnnotation(view.annotation, animated: false)
+        
+
             
-            
+            print(view.annotation!)
 
             
             // Find this pin
@@ -174,26 +166,29 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             
             
-            
-            // Remove annotation from mapView
-            
-            performUIUpdatesOnMain {
-                self.mapView.removeAnnotation(view.annotation!)
+            // if in edit mode, then delete pin
+            guard !self.deleteBarVisible else {
+                mapView.removeAnnotation(view.annotation!)
+                stack.context.delete(pin)
+                stack.save()
+                return
             }
             
             
-            
-            
-            stack.context.delete(pin)
-            stack.save()
-            
-        } else {
+        
+        
+            // Assign pin to variable
+            // So that next view controller knows what we're talking about
+            // And app won't crash when starting the app and clicking an existing pin
+
+            self.pin = pin
+
             
             // Take user to photo album
             
             performSegue(withIdentifier: "ShowCollectionView", sender: self)
             
-        }
+    
         
     }
     

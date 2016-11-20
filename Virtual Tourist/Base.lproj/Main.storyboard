@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,9 +22,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hCy-wx-Ign">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hCy-wx-Ign">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="Exd-dg-lBu"/>
+                                </constraints>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="KXw-gR-qc8"/>
                                     <barButtonItem title="Tap Pins to Delete" id="H5Q-kK-2GP">
@@ -43,8 +46,11 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="p2a-l4-RWh" secondAttribute="bottom" id="2sN-oL-4dW"/>
+                            <constraint firstItem="hCy-wx-Ign" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="DRo-bD-e7d"/>
+                            <constraint firstAttribute="trailing" secondItem="hCy-wx-Ign" secondAttribute="trailing" id="HKf-k7-O7E"/>
                             <constraint firstItem="p2a-l4-RWh" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="nj2-hz-8oe"/>
                             <constraint firstItem="p2a-l4-RWh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="oge-ky-tt5"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hCy-wx-Ign" secondAttribute="bottom" id="uvZ-2y-XE0"/>
                             <constraint firstAttribute="trailing" secondItem="p2a-l4-RWh" secondAttribute="trailing" id="xC7-fY-W8F"/>
                         </constraints>
                     </view>
@@ -79,25 +85,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kIp-kn-CaE">
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kIp-kn-CaE">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="6r6-P8-9Qb"/>
+                                </constraints>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="i6p-2J-ZS4"/>
                                     <barButtonItem title="New Collection" id="jnP-lU-Fep"/>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="nWh-v3-5he"/>
                                 </items>
                             </toolbar>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hdy-UN-Ts8">
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="hdy-UN-Ts8">
                                 <rect key="frame" x="0.0" y="64" width="375" height="128"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="128" id="Hbf-z8-gu6"/>
+                                </constraints>
                                 <connections>
                                     <outlet property="delegate" destination="kF0-Fc-SGw" id="MNV-Hs-1qh"/>
                                 </connections>
                             </mapView>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="PBi-fd-FCQ">
-                                <rect key="frame" x="16" y="200" width="343" height="423"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="PBi-fd-FCQ">
+                                <rect key="frame" x="16" y="207" width="343" height="416"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AC7-jl-pJV">
                                     <size key="itemSize" width="50" height="50"/>
@@ -137,6 +146,18 @@
                             </collectionView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="PBi-fd-FCQ" firstAttribute="trailing" secondItem="HvR-DC-1tV" secondAttribute="trailingMargin" id="14y-MH-TWc"/>
+                            <constraint firstItem="sV4-Cf-nRM" firstAttribute="top" secondItem="kIp-kn-CaE" secondAttribute="bottom" id="Pv7-ZD-uQW"/>
+                            <constraint firstItem="kIp-kn-CaE" firstAttribute="leading" secondItem="HvR-DC-1tV" secondAttribute="leading" id="cbE-Hj-z8d"/>
+                            <constraint firstAttribute="trailing" secondItem="hdy-UN-Ts8" secondAttribute="trailing" id="cuS-jB-DE6"/>
+                            <constraint firstAttribute="trailing" secondItem="kIp-kn-CaE" secondAttribute="trailing" id="eX7-4R-XYC"/>
+                            <constraint firstItem="hdy-UN-Ts8" firstAttribute="leading" secondItem="HvR-DC-1tV" secondAttribute="leading" id="enz-IH-Nbv"/>
+                            <constraint firstItem="PBi-fd-FCQ" firstAttribute="leading" secondItem="HvR-DC-1tV" secondAttribute="leadingMargin" id="fo0-RP-rDJ"/>
+                            <constraint firstItem="hdy-UN-Ts8" firstAttribute="top" secondItem="p2k-qH-VhY" secondAttribute="bottom" id="hPT-Wa-GvQ"/>
+                            <constraint firstItem="kIp-kn-CaE" firstAttribute="top" secondItem="PBi-fd-FCQ" secondAttribute="bottom" id="hWW-5H-gSa"/>
+                            <constraint firstItem="PBi-fd-FCQ" firstAttribute="top" secondItem="hdy-UN-Ts8" secondAttribute="bottom" constant="15" id="zAT-WJ-eFS"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="BES-y1-ueP"/>
                     <connections>
