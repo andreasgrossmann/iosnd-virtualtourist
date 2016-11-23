@@ -44,6 +44,23 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         // Get core data stack
         let delegate = UIApplication.shared.delegate as! AppDelegate
         stack = delegate.stack
+        
+        
+        
+        // Set map region and show location pin
+        
+        if let photoAlbumMapView = photoAlbumMapView {
+            
+            let mapCenter = CLLocationCoordinate2D(latitude: CLLocationDegrees(pin.latitude), longitude: CLLocationDegrees(pin.longitude))
+            let mapSpan = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+            let mapRegion = MKCoordinateRegionMake(mapCenter, mapSpan)
+            photoAlbumMapView.setRegion(mapRegion, animated: true)
+            photoAlbumMapView.isUserInteractionEnabled = false
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = mapCenter
+            photoAlbumMapView.addAnnotation(annotation)
+        }
 
 
         
