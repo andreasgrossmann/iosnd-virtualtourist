@@ -42,6 +42,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         longPressGestureRecognizer.minimumPressDuration = 0.5
         view.addGestureRecognizer(longPressGestureRecognizer)
         
+        // Restore last known map region
+        loadMostRecentMapRegion()
+        
         // Get core data stack
         let delegate = UIApplication.shared.delegate as! AppDelegate
         stack = delegate.stack
@@ -83,6 +86,34 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         
     }
+    
+    
+    
+    
+    
+    // MARK: Save and restore most recent map region
+    
+    func saveMostRecentMapRegion() {
+        let defaults = UserDefaults.standard
+        defaults.set(mapView.region.center.latitude, forKey: "MapLatitude")
+        defaults.set(mapView.region.center.longitude, forKey: "MapLongitude")
+        defaults.set(mapView.region.span.latitudeDelta, forKey: "MapLatitudeDelta")
+        defaults.set(mapView.region.span.longitudeDelta, forKey: "MapLongitudeDelta")
+    }
+    
+    func loadMostRecentMapRegion() {
+        let defaults = UserDefaults.standard
+        if let mapLat = defaults.object(forKey: "MapLatitude") as? CLLocationDegrees,
+            let mapLon = defaults.object(forKey: "MapLongitude") as? CLLocationDegrees,
+            let mapLatDelta = defaults.object(forKey: "MapLatitudeDelta") as? CLLocationDegrees,
+            let mapLonDelta = defaults.object(forKey: "MapLongitudeDelta") as? CLLocationDegrees {
+            mapView.region.center = CLLocationCoordinate2D(latitude: mapLat, longitude: mapLon)
+            mapView.region.span = MKCoordinateSpanMake(mapLatDelta, mapLonDelta)
+        }
+    }
+    
+    
+    
     
     
     
@@ -135,6 +166,20 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
+    
+    
+    // Save map region when it changes
+    
+    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        saveMostRecentMapRegion()
+    }
+    
+    
+
+    
+    
+    
+    
     
 
     // Pin tapped
