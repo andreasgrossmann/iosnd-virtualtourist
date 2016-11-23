@@ -61,6 +61,16 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
             annotation.coordinate = mapCenter
             photoAlbumMapView.addAnnotation(annotation)
         }
+        
+        
+        
+        
+        
+        
+
+        
+        
+        
 
 
         
@@ -85,13 +95,28 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        
+        
+        // create fetch request to load photos
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+        do {
+            if let photos = try? stack.context.fetch(fetchRequest) as! [Photo] {
+                
+                self.photos = photos
+                
+            }
+        }
+        
+        
+        
+        
 
         // Check if we already have photos for this location
         
         if photos.count == 0 {
             
-            print(pin)
-            print(photos)
+//            print(pin)
+//            print(photos)
             
 
             FlickrClient.sharedInstance().getFlickrPhotos(pin: pin) { (photos, error) in
@@ -113,9 +138,9 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                     
                     performUIUpdatesOnMain {
                         self.photos = photos
-                        self.stack.save()
-                        print("URLS SAVED")
-                        print(self.photos)
+//                        self.stack.save()
+//                        print("URLS SAVED")
+//                        print(self.photos)
                     }
                     performUIUpdatesOnMain {
                         if self.photos.count == 0 {
@@ -238,6 +263,11 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         
         if photos[indexPath.item].data == nil {
+            
+            
+            // NOTE: WHEN YOU TAP ON A PIN, IT SEEMS TO DOWNLOAD AND SAVE THE IMAGES AS EXPECTED
+            // HOWEVER, WHEN YOU GO BACK TO MAP VIEW AND TAP ON IT AGAIN, IT SEEMS TO DOWNLOAD NEW PHOTOS
+            // THEN WHEN YOU GO BACK AND TAP ON THE PIN AGAIN, IT SEEMS TO PERSIST THE PHOTOS WITHOUT DOWNLOADING NEW ONES
 
         
         
@@ -253,6 +283,15 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                     
                     performUIUpdatesOnMain {
                         cell.virtualTouristCollectionImage.image = UIImage(data: data!)
+                        
+                        
+                        self.photos[indexPath.item].data = data as NSData?
+                        
+
+                        self.stack.save()
+                        print("Photo data saved")
+                        
+                        
                     }
                         
                 }
