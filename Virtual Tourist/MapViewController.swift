@@ -21,9 +21,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     // MARK: Properties
     
     var pin: Pin!
-    
     var stack: CoreDataStack!
-    
     var deleteBarVisible = false
     
     
@@ -43,21 +41,25 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         view.addGestureRecognizer(longPressGestureRecognizer)
         
         // Restore last known map region
-        loadMostRecentMapRegion()
+        performUIUpdatesOnMain {
+            self.loadMostRecentMapRegion()
+        }
         
         // Get core data stack
         let delegate = UIApplication.shared.delegate as! AppDelegate
         stack = delegate.stack
         
-        
-        loadPins()
+        // Load pins
+        performUIUpdatesOnMain {
+            self.loadPins()
+        }
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-    }
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//
+//    }
     
     // MARK: Actions
     
@@ -65,23 +67,31 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
         if deleteBarVisible == false {
             
-            UIView.animate(withDuration: 0.2, animations: {
-                self.mapView.frame.origin.y -= self.deleteBar.frame.height
-            })
-            
-            editButton.title = "Done"
-            
-            deleteBarVisible = true
+            performUIUpdatesOnMain {
+                
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.mapView.frame.origin.y -= self.deleteBar.frame.height
+                })
+                
+                self.editButton.title = "Done"
+                
+                self.deleteBarVisible = true
+                
+            }
             
         } else {
             
-            UIView.animate(withDuration: 0.2, animations: {
-                self.mapView.frame.origin.y += self.deleteBar.frame.height
-            })
-            
-            editButton.title = "Edit"
-            
-            deleteBarVisible = false
+            performUIUpdatesOnMain {
+                
+                UIView.animate(withDuration: 0.2, animations: {
+                    self.mapView.frame.origin.y += self.deleteBar.frame.height
+                })
+                
+                self.editButton.title = "Edit"
+                
+                self.deleteBarVisible = false
+                
+            }
             
         }
         
@@ -129,13 +139,15 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             annotation.coordinate = touchMapCoordinates
             mapView.addAnnotation(annotation)
             
-            print(self.mapView.annotations.count)
+//            print(self.mapView.annotations.count)
             
             pin = Pin(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude, context: stack.context)
             
         }
         
-        stack.save()
+        performUIUpdatesOnMain {
+            self.stack.save()
+        }
 
     }
     
@@ -191,7 +203,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         
 
             
-            print(view.annotation!)
+//            print(view.annotation!)
 
             
             // Find this pin
@@ -213,9 +225,11 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             // if in edit mode, then delete pin
             guard !self.deleteBarVisible else {
-                mapView.removeAnnotation(view.annotation!)
-                stack.context.delete(pin)
-                stack.save()
+                performUIUpdatesOnMain {
+                    mapView.removeAnnotation(view.annotation!)
+                    self.stack.context.delete(pin)
+                    self.stack.save()
+                }
                 return
             }
             
@@ -231,7 +245,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             // Take user to photo album
             
-            performSegue(withIdentifier: "ShowCollectionView", sender: self)
+        performUIUpdatesOnMain {
+            self.performSegue(withIdentifier: "ShowCollectionView", sender: self)
+        }
             
     
         

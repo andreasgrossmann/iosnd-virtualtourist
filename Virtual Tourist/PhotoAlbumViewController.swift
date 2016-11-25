@@ -62,16 +62,6 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
             photoAlbumMapView.addAnnotation(annotation)
         }
         
-        
-        
-        
-        
-        
-
-        
-        
-        
-
 
         
     }
@@ -79,13 +69,13 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        // calculate layout for collection view
+        // Calculate collection view layout
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
-        // update collection view layout
+        // Update collection view layout
         let size = floor(photoAlbumCollectionView.frame.size.width/3)
         layout.itemSize = CGSize(width: size, height: size)
         photoAlbumCollectionView.collectionViewLayout = layout
@@ -97,27 +87,59 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         
         
-        // create fetch request to load photos
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+//        // create fetch request to load photos
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+//        do {
+//            if let photos = try? stack.context.fetch(fetchRequest) as! [Photo] {
+//                
+//                self.photos = photos
+//                
+//            }
+//        }
+        
+        
+        
+        
+        
+        
+        
+        
+        // See if we have photos for this location
         do {
-            if let photos = try? stack.context.fetch(fetchRequest) as! [Photo] {
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Photo")
+            let predicate = NSPredicate(format: "pin == %@", argumentArray: [pin])
+            fetchRequest.predicate = predicate
+            if let photos = try stack.context.fetch(fetchRequest) as? [Photo] {
                 
-                self.photos = photos
+                // Sort photos
+                let sortedPhotos = photos.sorted { $0.url! < $1.url! }
                 
+                self.photos = sortedPhotos
+                
+                print("Photos Count: \(self.photos.count)")
             }
+        } catch let error as NSError {
+            print("failed to get pin by object id")
+            print(error.localizedDescription)
+            return
         }
         
         
         
         
+        
+        
+        
+        
 
-        // Check if we already have photos for this location
+        // If there are no photos for this location, get them from Flickr
         
         if photos.count == 0 {
             
 //            print(pin)
 //            print(photos)
             
+            // Get image URLs from Flickr
 
             FlickrClient.sharedInstance().getFlickrPhotos(pin: pin) { (photos, error) in
                 
@@ -130,21 +152,33 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 
                 
                 
+                
                 if let photos = photos {
+                    
+                    // Sort photos
+                    let sortedPhotos = photos.sorted { $0.url! < $1.url! }
+                    
+                    // populate photos array with urls
+                    
+                    performUIUpdatesOnMain {
+                        self.photos = sortedPhotos
+//                        self.stack.save()
+//                        print("URLS SAVED")
+//                        print(self.photos)
+                    }
+                    
+                    
+                    // assign pin for this location to each photo url
                     
                     for photo in photos {
                         photo.pin = self.pin
                     }
                     
-                    performUIUpdatesOnMain {
-                        self.photos = photos
-//                        self.stack.save()
-//                        print("URLS SAVED")
-//                        print(self.photos)
-                    }
+                    
                     performUIUpdatesOnMain {
                         if self.photos.count == 0 {
                             print("no photos found")
+                            // TODO: Display this in the view
                         }
                     }
                     
@@ -253,7 +287,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VirtualTouristCollectionViewCell", for: indexPath) as! VirtualTouristCollectionViewCell
         
-        let photoObject = photos[indexPath.row]
+        let photoObject = photos[indexPath.item]
         
         
         performUIUpdatesOnMain {
@@ -265,10 +299,11 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
         if photos[indexPath.item].data == nil {
             
             
-            // NOTE: WHEN YOU TAP ON A PIN, IT SEEMS TO DOWNLOAD AND SAVE THE IMAGES AS EXPECTED
-            // HOWEVER, WHEN YOU GO BACK TO MAP VIEW AND TAP ON IT AGAIN, IT SEEMS TO DOWNLOAD NEW PHOTOS
-            // THEN WHEN YOU GO BACK AND TAP ON THE PIN AGAIN, IT SEEMS TO PERSIST THE PHOTOS WITHOUT DOWNLOADING NEW ONES
 
+            print("photo data seems to be nil")
+//            for photo in photos {
+//                print("photo data: \(photo.data)")
+//            }
         
         
             // Get image data from Flickr
@@ -276,10 +311,11 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
             FlickrClient.sharedInstance().downloadImage(photos: photoObject) { (data, error) in
                 
                 print("ATTENTION: DOWNLOAD IMAGES")
+//                print("photoObject: \(photoObject)")
                 
                 if (data != nil) {
                     
-                    print(data!)
+//                    print(data!)
                     
                     performUIUpdatesOnMain {
                         cell.virtualTouristCollectionImage.image = UIImage(data: data!)
@@ -287,6 +323,11 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                         
                         self.photos[indexPath.item].data = data as NSData?
                         
+//                        print(self.photos[indexPath.item])
+                        
+//                        self.photos[indexPath.item].pin = self.pin
+
+//                        print([indexPath.item])
 
                         self.stack.save()
                         print("Photo data saved")
@@ -299,7 +340,7 @@ class PhotoAlbumViewController: UIViewController, MKMapViewDelegate, UICollectio
                 
             }
                 
-            
+//         print("House: \(self.photos)")
             
         } else {
             
