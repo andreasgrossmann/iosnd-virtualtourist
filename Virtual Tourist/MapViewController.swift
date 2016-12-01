@@ -23,14 +23,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
     var pin: Pin!
     var stack: CoreDataStack!
     var deleteBarVisible = false
-    
-    
-    
 
-    
-    
-    
-    
     // MARK: Lifecycle
     
     override func viewDidLoad() {
@@ -41,9 +34,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         view.addGestureRecognizer(longPressGestureRecognizer)
         
         // Restore last known map region
-        performUIUpdatesOnMain {
-            self.loadMostRecentMapRegion()
-        }
+        loadMostRecentMapRegion()
         
         // Get core data stack
         let delegate = UIApplication.shared.delegate as! AppDelegate
@@ -55,26 +46,22 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         
     }
-    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//    }
-    
+
     // MARK: Actions
     
     @IBAction func editPressed(_ sender: Any) {
         
-        if deleteBarVisible == false {
+        if !deleteBarVisible {
             
             performUIUpdatesOnMain {
+                
+                // Slide map up to reveal delete bar
                 
                 UIView.animate(withDuration: 0.2, animations: {
                     self.mapView.frame.origin.y -= self.deleteBar.frame.height
                 })
                 
                 self.editButton.title = "Done"
-                
                 self.deleteBarVisible = true
                 
             }
@@ -83,12 +70,13 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             
             performUIUpdatesOnMain {
                 
+                // Slide map down to hide delete bar
+                
                 UIView.animate(withDuration: 0.2, animations: {
                     self.mapView.frame.origin.y += self.deleteBar.frame.height
                 })
                 
                 self.editButton.title = "Edit"
-                
                 self.deleteBarVisible = false
                 
             }
@@ -96,11 +84,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
         
     }
-    
-    
-    
-    
-    
+
     // MARK: Save and restore most recent map region
     
     func saveMostRecentMapRegion() {
@@ -121,13 +105,8 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             mapView.region.span = MKCoordinateSpanMake(mapLatDelta, mapLonDelta)
         }
     }
-    
-    
-    
-    
-    
-    
-    // Add map annotation on long press
+
+    // MARK: Add map annotation on long press
     
     func addAnnotation(gestureRecognizer:UIGestureRecognizer) {
         
@@ -138,11 +117,9 @@ class MapViewController: UIViewController, MKMapViewDelegate {
             let annotation = MKPointAnnotation()
             annotation.coordinate = touchMapCoordinates
             mapView.addAnnotation(annotation)
-            
-//            print(self.mapView.annotations.count)
-            
+
             pin = Pin(latitude: annotation.coordinate.latitude, longitude: annotation.coordinate.longitude, context: stack.context)
-            
+
         }
         
         performUIUpdatesOnMain {
@@ -150,21 +127,19 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
 
     }
-    
-    
-    
-    
-    
-    
+
+    // MARK: Load pins
     
     func loadPins() {
         
-        // create fetch request
+        // Create fetch request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+
+        // Try to fetch pins
         do {
-            if let pins = try? stack.context.fetch(fetchRequest) as! [Pin] {
+            if let pins = try stack.context.fetch(fetchRequest) as? [Pin] {
                 
-                // create annotations for pins
+                // Create annotations for pins
                 for pin in pins {
                     let latitude = CLLocationDegrees(pin.latitude)
                     let longitude = CLLocationDegrees(pin.longitude)
@@ -175,85 +150,60 @@ class MapViewController: UIViewController, MKMapViewDelegate {
                 }
 
             }
+        } catch let error as NSError {
+            print(error.localizedDescription)
+            return
         }
     }
 
-    
-    
-    // Save map region when it changes
+    // MARK: Save map region when it changes
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         saveMostRecentMapRegion()
     }
-    
-    
 
-    
-    
-    
-    
-    
-
-    // Pin tapped
+    // MARK: Pin tapped
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
-        // deselect the pin annotation
+        // Deselect pin
         mapView.deselectAnnotation(view.annotation, animated: false)
+
+        // Find pin
         
+        let thisPin = view.annotation as AnyObject
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
+        let predicate = NSPredicate(format: "latitude == %@ AND longitude == %@", argumentArray: [thisPin.coordinate.latitude, thisPin.coordinate.longitude])
+        fetchRequest.predicate = predicate
 
-            
-//            print(view.annotation!)
-
-            
-            // Find this pin
-            var pin: Pin!
-            do {
-                let thisPin = view.annotation as AnyObject
-                let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Pin")
-                let predicate = NSPredicate(format: "latitude == %@ AND longitude == %@", argumentArray: [thisPin.coordinate.latitude, thisPin.coordinate.longitude])
-                fetchRequest.predicate = predicate
-                let pins = try stack.context.fetch(fetchRequest) as? [Pin]
-                pin = pins![0]
-            } catch let error as NSError {
-                print("failed to get pin by object id")
-                print(error.localizedDescription)
-                return
+        do {
+            if let pins = try stack.context.fetch(fetchRequest) as? [Pin] {
+                pin = pins[0]
             }
-            
-            
-            
-            // if in edit mode, then delete pin
-            guard !self.deleteBarVisible else {
-                performUIUpdatesOnMain {
-                    mapView.removeAnnotation(view.annotation!)
-                    self.stack.context.delete(pin)
-                    self.stack.save()
-                }
-                return
+        } catch let error as NSError {
+            print(error.localizedDescription)
+            return
+        }
+
+        // If deleteBar is visible, delete pin and save
+        guard !self.deleteBarVisible else {
+            performUIUpdatesOnMain {
+                mapView.removeAnnotation(view.annotation!)
+                self.stack.context.delete(self.pin)
+                self.stack.save()
             }
-            
-            
+            return
+        }
         
-        
-            // Assign pin to variable
-            // So that next view controller knows what we're talking about
-            // And app won't crash when starting the app and clicking an existing pin
-
-            self.pin = pin
-
-            
-            // Take user to photo album
+        // Take user to photo album
             
         performUIUpdatesOnMain {
             self.performSegue(withIdentifier: "ShowCollectionView", sender: self)
         }
-            
-    
-        
+
     }
     
-    
+    // Pass selected pin along with segue
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "ShowCollectionView") {
@@ -262,7 +212,4 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         }
     }
 
-
-
 }
-

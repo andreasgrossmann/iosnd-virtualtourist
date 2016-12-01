@@ -117,7 +117,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VirtualTouristCollectionViewCell" id="32d-v5-ElI" customClass="VirtualTouristCollectionViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
-                                        <rect key="frame" x="72" y="0.0" width="200" height="200"/>
+                                        <rect key="frame" x="71.5" y="0.0" width="200" height="200"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
@@ -145,11 +145,23 @@
                                     <outlet property="delegate" destination="kF0-Fc-SGw" id="WUk-PJ-FdT"/>
                                 </connections>
                             </collectionView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No photos found 🙁" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="53d-vP-fPq">
+                                <rect key="frame" x="16" y="292" width="343" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="82l-sx-wZc"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="PBi-fd-FCQ" firstAttribute="trailing" secondItem="HvR-DC-1tV" secondAttribute="trailingMargin" id="14y-MH-TWc"/>
+                            <constraint firstItem="53d-vP-fPq" firstAttribute="trailing" secondItem="HvR-DC-1tV" secondAttribute="trailingMargin" id="DWI-Up-noD"/>
+                            <constraint firstItem="53d-vP-fPq" firstAttribute="leading" secondItem="HvR-DC-1tV" secondAttribute="leadingMargin" id="NsG-rR-Q2B"/>
                             <constraint firstItem="sV4-Cf-nRM" firstAttribute="top" secondItem="kIp-kn-CaE" secondAttribute="bottom" id="Pv7-ZD-uQW"/>
+                            <constraint firstItem="53d-vP-fPq" firstAttribute="top" secondItem="hdy-UN-Ts8" secondAttribute="bottom" constant="100" id="avn-1W-hYV"/>
                             <constraint firstItem="kIp-kn-CaE" firstAttribute="leading" secondItem="HvR-DC-1tV" secondAttribute="leading" id="cbE-Hj-z8d"/>
                             <constraint firstAttribute="trailing" secondItem="hdy-UN-Ts8" secondAttribute="trailing" id="cuS-jB-DE6"/>
                             <constraint firstAttribute="trailing" secondItem="kIp-kn-CaE" secondAttribute="trailing" id="eX7-4R-XYC"/>
@@ -162,7 +174,9 @@
                     </view>
                     <navigationItem key="navigationItem" id="BES-y1-ueP"/>
                     <connections>
+                        <outlet property="bottomBar" destination="kIp-kn-CaE" id="N86-qd-zSa"/>
                         <outlet property="bottomBarButton" destination="jnP-lU-Fep" id="cDj-sz-O4G"/>
+                        <outlet property="noPhotosLabel" destination="53d-vP-fPq" id="QEb-tZ-nFQ"/>
                         <outlet property="photoAlbumCollectionView" destination="PBi-fd-FCQ" id="hZm-ot-eY1"/>
                         <outlet property="photoAlbumMapView" destination="hdy-UN-Ts8" id="Z91-al-LgU"/>
                     </connections>
